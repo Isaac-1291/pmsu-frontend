@@ -1,25 +1,57 @@
-import React from "react";
-import MembershipForm from "./components/MembershipForm";
+import { useState } from "react";
 import logo from "./assets/cmc_logo.jpg";
+import Notifications from "./components/Notifications";
+import AdminLogin from "./components/AdminLogin";
+import MembershipForm from "./components/MembershipForm";
+import LoanForm from "./components/LoanForm";
+import LoanCommittee from "./components/LoanCommittee";
+import MembersTable from "./components/MembersTable";
 
 function App() {
+  const [activeTab, setActiveTab] = useState("membership"); // default tab
+  const [isAdmin, setIsAdmin] = useState(false);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#4B2E2E] via-[#D9B38C] to-[#FFF3E0] flex flex-col items-center p-6">
+    <div className="min-h-screen bg-[#f5f0eb]"> {/* CMC background color */}
       {/* Header */}
-      <header className="flex flex-col md:flex-row items-center md:justify-center mb-8 space-y-4 md:space-y-0 md:space-x-6">
-        <img src={logo} alt="CMC Logo" className="h-20 w-20 object-contain" />
-        <h1 className="text-3xl md:text-4xl font-bold text-white text-center md:text-left">
-          PROFESSIONAL AND MANAGERIAL STAFF UNION (PMSU) - CMC
-        </h1>
+      <header className="flex justify-between items-center p-4 bg-[#4a2c0a] text-white">
+        <div className="flex items-center space-x-4">
+          <img src={logo} alt="CMC Logo" className="h-12 w-12 object-contain" />
+          <h1 className="text-xl font-bold">PMSU System</h1>
+        </div>
+        <div className="flex items-center space-x-4">
+          <Notifications />
+          <AdminLogin isAdmin={isAdmin} setIsAdmin={setIsAdmin} />
+        </div>
       </header>
 
-      {/* Membership Form */}
-      <MembershipForm />
-      
-      {/* Footer */}
-      <footer className="mt-12 text-[#3E2C2C] text-sm">
-        © {new Date().getFullYear()} Cocoa Marketing Company | PMSU
-      </footer>
+      {/* Menu Tabs */}
+      <nav className="bg-[#7f4e1e] p-2 text-white flex justify-center space-x-4">
+        <button onClick={() => setActiveTab("membership")} className="hover:underline">
+          Membership Form
+        </button>
+        <button onClick={() => setActiveTab("loan")} className="hover:underline">
+          Loan Form
+        </button>
+        {isAdmin && (
+          <>
+            <button onClick={() => setActiveTab("loanCommittee")} className="hover:underline">
+              Loan Committee
+            </button>
+            <button onClick={() => setActiveTab("membersTable")} className="hover:underline">
+              Registered Members
+            </button>
+          </>
+        )}
+      </nav>
+
+      {/* Content */}
+      <main className="p-4">
+        {activeTab === "membership" && <MembershipForm />}
+        {activeTab === "loan" && <LoanForm isAdmin={isAdmin} />}
+        {activeTab === "loanCommittee" && isAdmin && <LoanCommittee />}
+        {activeTab === "membersTable" && isAdmin && <MembersTable />}
+      </main>
     </div>
   );
 }
